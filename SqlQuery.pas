@@ -48,12 +48,12 @@ type
   TBlobFieldsinSQL = class
   private
     FFieldBlob: TMemoryStream;
-    FFieldName: WideString;
+    FFieldName: String;
 
     procedure SetFieldBlob(const Value: TMemoryStream);
-    procedure SetFieldName(const Value: WideString);
+    procedure SetFieldName(const Value: String);
   public
-    property FieldName : WideString read FFieldName write SetFieldName;
+    property FieldName : String read FFieldName write SetFieldName;
     property FieldBlob : TMemoryStream read FFieldBlob write SetFieldBlob;
 
     constructor Create;
@@ -80,7 +80,7 @@ type
     FFieldBlob: TList<TBlobFieldsinSQL>;
     FFailCount : Integer;
     FLogSQL: Boolean;
-    FPathLog: WideString;
+    FPathLog: String;
 
     procedure ExecuteZeusC(var Connection : TZConnection );
     procedure ExecuteZeus(var Query : TZQuery );
@@ -100,18 +100,19 @@ type
     procedure OpenADO(var query : TADOQuery );
 
     procedure FieldBlobClear;
-    procedure WriteLog( Log : WideString );
+    procedure WriteLog( Log : String );
 
     procedure SetDataSet(const Value: TDataSet);
     procedure SetLogSQL(const Value: Boolean);
-    procedure SetPathLog(const Value: WideString);
+    procedure SetPathLog(const Value: String);
   public
     property DataSet : TDataSet read FDataSet write SetDataSet;
     property LogSQL : Boolean read FLogSQL write SetLogSQL;
-    property PathLog : WideString read FPathLog write SetPathLog;
+    property PathLog : String read FPathLog write SetPathLog;
+    property ListFieldBlob : TList<TBlobFieldsinSQL> read FFieldBlob write FFieldBlob;
 
-    function FieldBlob( FieldName : WideString; FieldBlob : TMemoryStream ) : TSQLQuery; virtual;
-    function UpFieldBlob( FieldName : WideString; FieldBlob : TMemoryStream ) : TSQLQuery; virtual;
+    function FieldBlob( FieldName : String; FieldBlob : TMemoryStream ) : TSQLQuery; virtual;
+    function UpFieldBlob( FieldName : String; FieldBlob : TMemoryStream ) : TSQLQuery; virtual;
 
     function Execute(var Query : TZQuery ) : TSqlQuery; overload;
     function Execute(var Query : TFDQuery ) : TSqlQuery; overload;
@@ -135,12 +136,12 @@ type
     function Bof : Boolean;
     function Active : Boolean;
 
-    function SetField( Field : WideString; Value : WideString ) : TSQLQuery; overload; virtual;
-    function SetField( Field : WideString; Value : Double ) : TSQLQuery; overload; virtual;
-    function SetField( Field : WideString; Value : TDateTime ) : TSQLQuery; overload; virtual;
-    function SetField( Field : WideString; Value : Int64 ) : TSQLQuery; overload; virtual;
-    function SetField( Field : WideString; Value : Integer ) : TSQLQuery; overload; virtual;
-    function SetField( Field : WideString; Value : Boolean ) : TSQLQuery; overload; virtual;
+    function SetField( Field : String; Value : String ) : TSQLQuery; overload; virtual;
+    function SetField( Field : String; Value : Double ) : TSQLQuery; overload; virtual;
+    function SetField( Field : String; Value : TDateTime ) : TSQLQuery; overload; virtual;
+    function SetField( Field : String; Value : Int64 ) : TSQLQuery; overload; virtual;
+    function SetField( Field : String; Value : Integer ) : TSQLQuery; overload; virtual;
+    function SetField( Field : String; Value : Boolean ) : TSQLQuery; overload; virtual;
     //
     function First : TSQLQuery; virtual;
     function Prior : TSQLQuery; virtual;
@@ -152,28 +153,29 @@ type
     function Post : TSQLQuery; virtual;
     function Close : TSQLQuery; virtual;
     //
-    function getInteger( NameField : WideString ) : Integer; virtual;
-    function getLongInt( NameField : WideString ) : Int64; virtual;
-    function getWideString( NameField : WideString ) : WideString; virtual;
-    function getAnsiString( NameField : WideString ) : AnsiString; virtual;
-    function getFloat( NameField : WideString ) : Double; virtual;
-    function getCurrency( NameField : WideString ) : Double; virtual;
-    function getBoolean( NameField : WideString ) : Boolean; virtual;
-    function getDateTime( NameField : WideString ) : TDateTime; virtual;
-    function getBlob( NameField : WideString ) : TMemoryStream; virtual;
+    function getInteger( NameField : String ) : Integer; virtual;
+    function getLongInt( NameField : String ) : Int64; virtual;
+    function getWideString( NameField : String ) : String; virtual;
+    function getAnsiString( NameField : String ) : AnsiString; virtual;
+    function getFloat( NameField : String ) : Double; virtual;
+    function getCurrency( NameField : String ) : Double; virtual;
+    function getBoolean( NameField : String ) : Boolean; virtual;
+    function getDateTime( NameField : String ) : TDateTime; virtual;
+    function getBlob( NameField : String ) : TMemoryStream; virtual;
+    function getString( NameField : String ) : String; overload;
     //
-    function isEmpty( NameField : WideString ) : Boolean; virtual;
+    function isEmpty( NameField : String ) : Boolean; virtual;
 
-    function IntToString( NameField : WideString ) : WideString;
-    function IntToStringZero( NameField : WideString; Size : Integer ) : WideString;
-    function LongToString( NameField : WideString ) : WideString;
-    function LongToStringZero( NameField : WideString; Size : Integer ) : WideString;
-    function DateToString( NameField : WideString; Format : WideString = 'yyyy.mm.dd hh:nn:ss' ) : WideString;
-    function FloatToString( NameField : WideString; Format : WideString = '#0.00' ) : WideString;
-    function StringToInt( NameField : WideString ) : Integer;
-    function StringToLog( NameField : WideString ) : Int64;
-    function CurrencyToString( NameField : WideString; Format : WideString = '#0.00' ) : WideString;
-    function QueryToString : WideString;
+    function IntToString( NameField : String ) : String;
+    function IntToStringZero( NameField : String; Size : Integer ) : String;
+    function LongToString( NameField : String ) : String;
+    function LongToStringZero( NameField : String; Size : Integer ) : String;
+    function DateToString( NameField : String; Format : String = 'yyyy.mm.dd hh:nn:ss' ) : String;
+    function FloatToString( NameField : String; Format : String = '#0.00' ) : String;
+    function StringToInt( NameField : String ) : Integer;
+    function StringToLog( NameField : String ) : Int64;
+    function CurrencyToString( NameField : String; Format : String = '#0.00' ) : String;
+    function QueryToString : String;
 
     constructor Create; override;
     destructor Destroy; override;
@@ -248,7 +250,7 @@ begin
   SetADO( ExecuteADOC, ExecuteADO, OpenADO );
 end;
 
-function TSQLQuery.CurrencyToString(NameField, Format: WideString): WideString;
+function TSQLQuery.CurrencyToString(NameField, Format: String): String;
 begin
   if Length(Trim(Format)) = 0  then
     Format := '#0.00';
@@ -256,12 +258,15 @@ begin
   Result := FormatFloat( Format, getCurrency( NameField ) );
 end;
 
-function TSQLQuery.DateToString(NameField, Format: WideString): WideString;
+function TSQLQuery.DateToString(NameField, Format: String): String;
 begin
   if Length(Trim(Format)) = 0  then
     Format := 'yyyy.mm.dd hh:nn:ss';
 
-  Result := FormatDateTime( Format, getDateTime(NameField) );
+  if Self.FDataSet.FieldByName(NameField).IsNull then
+    Result := 'Null'
+  else
+    Result := FormatDateTime( Format, Self.FDataSet.FieldByName(NameField).AsDateTime );
 end;
 
 destructor TSQLQuery.Destroy;
@@ -292,7 +297,7 @@ begin
   Result := Self;
 end;
 
-function TSQLQuery.FloatToString(NameField, Format: WideString): WideString;
+function TSQLQuery.FloatToString(NameField, Format: String): String;
 begin
   if Length(Trim(Format)) = 0  then
     Format := '#0.00';
@@ -1013,7 +1018,10 @@ begin
         on e: Exception do
         begin
           if Self.FLogSQL then
+          begin
+            WriteLog( 'SQL : [' + GetString + ']' );
             WriteLog( e.Message );
+          end;
 
           case SGDBType of
             dbPostGreSQL:
@@ -1193,7 +1201,7 @@ begin
   Result := Self;
 end;
 
-function TSQLQuery.QueryToString: WideString;
+function TSQLQuery.QueryToString: String;
 var
   I: Integer;
 begin
@@ -1207,7 +1215,7 @@ begin
       for I := 0 to Self.FDataSet.FieldCount -1 do
       begin
         case Self.FDataSet.FieldList[I].DataType of
-          ftWideString, ftString : Add( Self.FDataSet.FieldList[I].FieldName ).Equal( Self.FDataSet.FieldByName( Self.FDataSet.FieldList[I].FieldName ).AsWideString ).Next;
+          ftString, ftWideString : Add( Self.FDataSet.FieldList[I].FieldName ).Equal( Self.FDataSet.FieldByName( Self.FDataSet.FieldList[I].FieldName ).AsString ).Next;
           ftShortint, ftSmallint, ftInteger, ftWord : Add( Self.FDataSet.FieldList[I].FieldName ).Equal( Self.FDataSet.FieldByName( Self.FDataSet.FieldList[I].FieldName ).AsInteger ).Next;
           ftBoolean : Add( Self.FDataSet.FieldList[I].FieldName ).Equal( Self.FDataSet.FieldByName( Self.FDataSet.FieldList[I].FieldName ).AsBoolean ).Next;
           ftFloat, ftCurrency : Add( Self.FDataSet.FieldList[I].FieldName ).Equal( Self.FDataSet.FieldByName( Self.FDataSet.FieldList[I].FieldName ).AsFloat ).Next;
@@ -1228,7 +1236,7 @@ begin
     Result := Self.FDataSet.RecNo;
 end;
 
-function TSQLQuery.SetField(Field: WideString; Value: Double): TSQLQuery;
+function TSQLQuery.SetField(Field: String; Value: Double): TSQLQuery;
 begin
   if Active then
     Self.FDataSet.FieldByName( Field ).AsFloat := Value;
@@ -1236,15 +1244,15 @@ begin
   Result := Self;
 end;
 
-function TSQLQuery.SetField(Field, Value: WideString): TSQLQuery;
+function TSQLQuery.SetField(Field, Value: String): TSQLQuery;
 begin
   if Active then
-    Self.FDataSet.FieldByName( Field ).AsWideString := Value;
+    Self.FDataSet.FieldByName( Field ).AsString := Value;
 
   Result := Self;
 end;
 
-function TSQLQuery.SetField(Field: WideString; Value: Integer): TSQLQuery;
+function TSQLQuery.SetField(Field: String; Value: Integer): TSQLQuery;
 begin
   if Active then
     Self.FDataSet.FieldByName( Field ).AsInteger := Value;
@@ -1257,7 +1265,7 @@ begin
   FDataSet := Value;
 end;
 
-function TSQLQuery.SetField(Field: WideString; Value: Boolean): TSQLQuery;
+function TSQLQuery.SetField(Field: String; Value: Boolean): TSQLQuery;
 begin
   if Active then
     Self.FDataSet.FieldByName( Field ).AsBoolean := Value;
@@ -1270,12 +1278,12 @@ begin
   FLogSQL := Value;
 end;
 
-procedure TSQLQuery.SetPathLog(const Value: WideString);
+procedure TSQLQuery.SetPathLog(const Value: String);
 begin
   FPathLog := Value;
 end;
 
-function TSQLQuery.SetField(Field: WideString; Value: Int64): TSQLQuery;
+function TSQLQuery.SetField(Field: String; Value: Int64): TSQLQuery;
 begin
   if Active then
     Self.FDataSet.FieldByName( Field ).AsLargeInt := Value;
@@ -1283,7 +1291,7 @@ begin
   Result := Self;
 end;
 
-function TSQLQuery.SetField(Field: WideString; Value: TDateTime): TSQLQuery;
+function TSQLQuery.SetField(Field: String; Value: TDateTime): TSQLQuery;
 begin
   if Active then
     Self.FDataSet.FieldByName( Field ).AsDateTime := Value;
@@ -1291,33 +1299,38 @@ begin
   Result := Self;
 end;
 
-function TSQLQuery.StringToInt(NameField: WideString): Integer;
+function TSQLQuery.StringToInt(NameField: String): Integer;
 begin
-  Result := StrToIntDef(Self.FDataSet.FieldByName(NameField).AsWideString,0);
+  Result := StrToIntDef(Self.FDataSet.FieldByName(NameField).AsString,0);
 end;
 
-function TSQLQuery.StringToLog(NameField: WideString): Int64;
+function TSQLQuery.StringToLog(NameField: String): Int64;
 begin
-  Result := StrToInt64Def(FDataSet.FieldByName(NameField).AsWideString, 0);
+  Result := StrToInt64Def(FDataSet.FieldByName(NameField).AsString, 0);
 end;
 
-function TSQLQuery.UpFieldBlob(FieldName: WideString; FieldBlob: TMemoryStream): TSQLQuery;
+function TSQLQuery.UpFieldBlob(FieldName: String; FieldBlob: TMemoryStream): TSQLQuery;
 var
   I : Integer;
 begin
   if Assigned( FieldBlob ) then
   begin
-    I := Self.FFieldBlob.Add( TBlobFieldsinSQL.Create );
-    Self.FFieldBlob[I].FFieldName := FieldName;
-    Self.FFieldBlob[I].FFieldBlob.LoadFromStream( FieldBlob );
+    if FieldBlob.Size > 0 then
+    begin
+      I := Self.FFieldBlob.Add( TBlobFieldsinSQL.Create );
+      Self.FFieldBlob[I].FFieldName := FieldName;
+      Self.FFieldBlob[I].FFieldBlob.LoadFromStream( FieldBlob );
 
-    Self.Add( ' ' + FieldName + ' = :' + Trim(FieldName) );
-  end;
+      Self.Add( ' ' + FieldName + ' = :' + Trim(FieldName) );
+    end
+    else Self.Add( ' ' + FieldName + ' = null' );
+  end
+  else Self.Add( ' ' + FieldName + ' = null' );
 
   Result := Self;
 end;
 
-procedure TSQLQuery.WriteLog(Log: WideString);
+procedure TSQLQuery.WriteLog(Log: String);
 var
   FileLog: TextFile;
 begin
@@ -1338,39 +1351,38 @@ begin
   except end;
 end;
 
-function TSQLQuery.getInteger(NameField: WideString): Integer;
+function TSQLQuery.getInteger(NameField: String): Integer;
 begin
   Result := Self.FDataSet.FieldByName(NameField).AsInteger;
 end;
 
-function TSQLQuery.getWideString(NameField: WideString): WideString;
-begin
-  Result := Trim(Self.FDataSet.FieldByName(NameField).AsWideString);
-end;
-
-function TSQLQuery.FieldBlob(FieldName: WideString; FieldBlob: TMemoryStream): TSQLQuery;
+function TSQLQuery.FieldBlob(FieldName: String; FieldBlob: TMemoryStream): TSQLQuery;
 var
   I : Integer;
 begin
   if Assigned( FieldBlob ) then
   begin
-    I := Self.FFieldBlob.Add( TBlobFieldsinSQL.Create );
-    Self.FFieldBlob[I].FFieldName := FieldName;
-    Self.FFieldBlob[I].FFieldBlob.LoadFromStream( FieldBlob );
+    if FieldBlob.Size > 0 then
+    begin
+      I := Self.FFieldBlob.Add( TBlobFieldsinSQL.Create );
+      Self.FFieldBlob[I].FieldName := FieldName;
+      Self.FFieldBlob[I].FieldBlob.LoadFromStream( FieldBlob );
 
-    Self.Add(' :' + Trim(FieldName) );
+      Self.Add(' :' + Trim(FieldName) );
+    end
+    else Self.Add('null');
   end
-  else Self.Add('null ');
+  else Self.Add('null');
 
   Result := Self;
 end;
 
-function TSQLQuery.IntToString(NameField: WideString): WideString;
+function TSQLQuery.IntToString(NameField: String): String;
 begin
   Result := IntToStr( getInteger( NameField ) );
 end;
 
-function TSQLQuery.IntToStringZero(NameField: WideString; Size: Integer): WideString;
+function TSQLQuery.IntToStringZero(NameField: String; Size: Integer): String;
 begin
   if Size > 0 then
     Result := Format( '%.' + IntToStr(Size) + 'd', [getInteger(NameField)])
@@ -1378,7 +1390,7 @@ begin
     Result := IntToStr( getInteger(NameField) );
 end;
 
-function TSQLQuery.isEmpty(NameField: WideString): Boolean;
+function TSQLQuery.isEmpty(NameField: String): Boolean;
 begin
   Result := Self.FDataSet.FieldByName(NameField).IsNull;
 end;
@@ -1391,12 +1403,12 @@ begin
   Result := Self;
 end;
 
-function TSQLQuery.LongToString(NameField: WideString): WideString;
+function TSQLQuery.LongToString(NameField: String): String;
 begin
   Result := IntToStr( getInteger( NameField ) );
 end;
 
-function TSQLQuery.LongToStringZero(NameField: WideString; Size: Integer): WideString;
+function TSQLQuery.LongToStringZero(NameField: String; Size: Integer): String;
 begin
   if Size > 0 then
     Result := Format( '%.' + IntToStr(Size) + 'd', [getLongInt(NameField)])
@@ -1412,45 +1424,62 @@ begin
   Result := Self;
 end;
 
-function TSQLQuery.getFloat(NameField: WideString): Double;
+function TSQLQuery.getFloat(NameField: String): Double;
 begin
   Result := Self.FDataSet.FieldByName(NameField).AsFloat;
 end;
 
-function TSQLQuery.getLongInt(NameField: WideString): Int64;
+function TSQLQuery.getLongInt(NameField: String): Int64;
 begin
   Result := Self.FDataSet.FieldByName(NameField).AsLargeInt;
 end;
 
-function TSQLQuery.getBlob(NameField: WideString): TMemoryStream;
+function TSQLQuery.getString(NameField: String): String;
+begin
+  Result := StringReplace(Self.FDataSet.FieldByName(NameField).AsString.Trim, 'null', '', [rfReplaceAll]);
+end;
+
+function TSQLQuery.getWideString(NameField: String): String;
+begin
+  Result := Trim(Self.FDataSet.FieldByName(NameField).AsString);
+end;
+
+function TSQLQuery.getBlob(NameField: String): TMemoryStream;
 var
   FieldStream : TStream;
 begin
-  try
-    FieldStream := Self.FDataSet.CreateBlobStream( Self.FDataSet.FieldByName( NameField ), bmRead );
-    Result := TMemoryStream.Create;
-    Result.LoadFromStream( FieldStream );
-  finally
-    FreeAndNil( FieldStream );
-  end;
+  if not Self.FDataSet.FieldByName( NameField ).IsNull then
+  begin
+    try
+      FieldStream := Self.FDataSet.CreateBlobStream( Self.FDataSet.FieldByName( NameField ), bmRead );
+      Result := TMemoryStream.Create;
+      Result.LoadFromStream( FieldStream );
+    finally
+      FreeAndNil( FieldStream );
+    end;
+  end
+  else Result := Nil;
 end;
 
-function TSQLQuery.getBoolean(NameField: WideString): Boolean;
+function TSQLQuery.getBoolean(NameField: String): Boolean;
 begin
-  Result := Self.FDataSet.FieldByName(NameField).AsBoolean;
+  if SGDBType = dbMySQL then
+    Result := (Self.FDataSet.FieldByName(NameField).AsInteger = 1)
+  else
+    Result := Self.FDataSet.FieldByName(NameField).AsBoolean;
 end;
 
-function TSQLQuery.getDateTime(NameField: WideString): TDateTime;
+function TSQLQuery.getDateTime(NameField: String): TDateTime;
 begin
   Result := Self.FDataSet.FieldByName(NameField).AsDateTime;
 end;
 
-function TSQLQuery.getAnsiString(NameField: WideString): AnsiString;
+function TSQLQuery.getAnsiString(NameField: String): AnsiString;
 begin
   Result := Self.FDataSet.FieldByName(NameField).AsAnsiString;
 end;
 
-function TSQLQuery.getCurrency(NameField: WideString): Double;
+function TSQLQuery.getCurrency(NameField: String): Double;
 begin
   Result := Self.FDataSet.FieldByName(NameField).asFloat;
 end;
@@ -1819,7 +1848,7 @@ begin
   FFieldBlob := Value;
 end;
 
-procedure TBlobFieldsinSQL.SetFieldName(const Value: WideString);
+procedure TBlobFieldsinSQL.SetFieldName(const Value: String);
 begin
   FFieldName := Value;
 end;

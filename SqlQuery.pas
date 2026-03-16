@@ -26,7 +26,11 @@
 }
 unit SQLQuery;
 
+{$HINTS OFF}
+{$WARNINGS OFF}
+
 interface
+
 uses
   System.SysUtils, System.Classes, Data.DB, PowerSqlBuilder,
   {ZeusLib}
@@ -154,6 +158,7 @@ type
     function Close : TSQLQuery; virtual;
     //
     function getInteger( NameField : String ) : Integer; virtual;
+    function getSmallInt( NameField : String ) : SmallInt; virtual;
     function getLongInt( NameField : String ) : Int64; virtual;
     function getWideString( NameField : String ) : String; virtual;
     function getAnsiString( NameField : String ) : AnsiString; virtual;
@@ -161,7 +166,7 @@ type
     function getCurrency( NameField : String ) : Double; virtual;
     function getBoolean( NameField : String ) : Boolean; virtual;
     function getDateTime( NameField : String ) : TDateTime; virtual;
-    function getBlob( NameField : String ) : TMemoryStream; virtual;
+    function getBlob(Value : TMemoryStream; NameField : String ) : TMemoryStream; virtual;
     function getString( NameField : String ) : String; overload;
     //
     function isEmpty( NameField : String ) : Boolean; virtual;
@@ -408,6 +413,15 @@ begin
               end
               else raise;
             end;
+            dbSQLLite:
+            begin
+              if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
+              begin
+                Query.Connection.Connected := False;
+                Query.Connection.Connected := True;
+              end
+              else raise;
+            end;
             dbNenhum:
             begin
               if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
@@ -487,6 +501,15 @@ begin
               else raise;
             end;
             dbFireBird:
+            begin
+              if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
+              begin
+                Connection.Connected := False;
+                Connection.Connected := True;
+              end
+              else raise;
+            end;
+            dbSQLLite:
             begin
               if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
               begin
@@ -589,6 +612,15 @@ begin
               end
               else raise;
             end;
+            dbSQLLite:
+            begin
+              if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
+              begin
+                Query.Connection.Connected := False;
+                Query.Connection.Connected := True;
+              end
+              else raise;
+            end;
             dbNenhum:
             begin
               if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
@@ -668,6 +700,15 @@ begin
               else raise;
             end;
             dbFireBird:
+            begin
+              if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
+              begin
+                Connection.Connected := False;
+                Connection.Connected := True;
+              end
+              else raise;
+            end;
+            dbSQLLite:
             begin
               if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
               begin
@@ -770,6 +811,15 @@ begin
               end
               else raise;
             end;
+            dbSQLLite:
+            begin
+              if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
+              begin
+                Query.Connection.Disconnect;
+                Query.Connection.Connect;
+              end
+              else raise;
+            end;
             dbNenhum:
             begin
               if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
@@ -849,6 +899,15 @@ begin
               else raise;
             end;
             dbFireBird:
+            begin
+              if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
+              begin
+                Connection.Disconnect;
+                Connection.Connect;
+              end
+              else raise;
+            end;
+            dbSQLLite:
             begin
               if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
               begin
@@ -959,6 +1018,15 @@ begin
               end
               else raise;
             end;
+            dbSQLLite:
+            begin
+              if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
+              begin
+                Query.Connection.Connected := False;
+                Query.Connection.Connected := True;
+              end
+              else raise;
+            end;
             dbNenhum:
             begin
               if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
@@ -1060,6 +1128,15 @@ begin
               end
               else raise;
             end;
+            dbSQLLite:
+            begin
+              if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
+              begin
+                Query.Connection.Connected := False;
+                Query.Connection.Connected := True;
+              end
+              else raise;
+            end;
             dbNenhum:
             begin
               if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
@@ -1150,6 +1227,15 @@ begin
               else raise;
             end;
             dbFireBird:
+            begin
+              if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
+              begin
+                Query.Connection.Disconnect;
+                Query.Connection.Connect;
+              end
+              else raise;
+            end;
+            dbSQLLite:
             begin
               if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
               begin
@@ -1434,6 +1520,11 @@ begin
   Result := Self.FDataSet.FieldByName(NameField).AsLargeInt;
 end;
 
+function TSQLQuery.getSmallInt(NameField: String): SmallInt;
+begin
+  Result := Self.FDataSet.FieldByName(NameField).AsInteger;
+end;
+
 function TSQLQuery.getString(NameField: String): String;
 begin
   Result := StringReplace(Self.FDataSet.FieldByName(NameField).AsString.Trim, 'null', '', [rfReplaceAll]);
@@ -1444,7 +1535,7 @@ begin
   Result := Trim(Self.FDataSet.FieldByName(NameField).AsString);
 end;
 
-function TSQLQuery.getBlob(NameField: String): TMemoryStream;
+function TSQLQuery.getBlob(Value : TMemoryStream; NameField: String): TMemoryStream;
 var
   FieldStream : TStream;
 begin
@@ -1452,13 +1543,16 @@ begin
   begin
     try
       FieldStream := Self.FDataSet.CreateBlobStream( Self.FDataSet.FieldByName( NameField ), bmRead );
-      Result := TMemoryStream.Create;
-      Result.LoadFromStream( FieldStream );
+
+      if Value = Nil then
+        Value := TMemoryStream.Create;
+
+      Value.LoadFromStream( FieldStream );
     finally
       FreeAndNil( FieldStream );
     end;
-  end
-  else Result := Nil;
+  end;
+  Result := Value;
 end;
 
 function TSQLQuery.getBoolean(NameField: String): Boolean;
@@ -1594,6 +1688,15 @@ begin
               end
               else raise;
             end;
+            dbSQLLite:
+            begin
+              if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
+              begin
+                Query.Connection.Connected := False;
+                Query.Connection.Connected := True;
+              end
+              else raise;
+            end;
             dbNenhum:
             begin
               if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
@@ -1641,7 +1744,7 @@ begin
       except
         on e: Exception do
         begin
-          if Self.FLogSQL then
+           if Self.FLogSQL then
             WriteLog( e.Message );
 
           case SGDBType of
@@ -1673,6 +1776,15 @@ begin
               else raise;
             end;
             dbFireBird:
+            begin
+              if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
+              begin
+                Connection.Connected := False;
+                Connection.Connected := True;
+              end
+              else raise;
+            end;
+            dbSQLLite:
             begin
               if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
               begin
@@ -1793,6 +1905,15 @@ begin
               else raise;
             end;
             dbFireBird:
+            begin
+              if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
+              begin
+                Query.Connection.Connected := False;
+                Query.Connection.Connected := True;
+              end
+              else raise;
+            end;
+            dbSQLLite:
             begin
               if (Pos('SERVER', UpperCase(e.Message) ) > 0) then
               begin
